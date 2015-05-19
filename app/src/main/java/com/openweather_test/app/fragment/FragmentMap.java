@@ -5,19 +5,24 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.SearchView;
 import android.view.*;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.openweather_test.app.R;
+import com.openweather_test.app.server_api.RequestHelper;
+import com.openweather_test.app.server_api.RequestLoader;
+import org.json.JSONObject;
 
-public class FragmentMap extends Fragment implements OnMapReadyCallback {
+public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<JSONObject> {
 
 	private static GoogleMap map;
+
+	private static final int LOADER_CITY = 0;
+	private static final int LOADER_WEATHER = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 					.findFragmentById(R.id.map);
 			mapFragment.getMapAsync(this);
 		}
+
+		Bundle bundle = new RequestHelper().getWeatherByCity("London");
+		getLoaderManager().initLoader(LOADER_CITY, bundle, this);
 	}
 
 	@Override
@@ -84,14 +92,30 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 	public void onMapReady(GoogleMap googleMap) {
 		map = googleMap;
 
-		LatLng sydney = new LatLng(-33.867, 151.206);
+//		LatLng sydney = new LatLng(-33.867, 151.206);
 
-		map.setMyLocationEnabled(true);
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+//		map.setMyLocationEnabled(true);
 
-		map.addMarker(new MarkerOptions()
-				.title("Sydney")
-				.snippet("The most populous city in Australia.")
-				.position(sydney));
+//		map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+//
+//		map.addMarker(new MarkerOptions()
+//				.title("Sydney")
+//				.snippet("The most populous city in Australia.")
+//				.position(sydney));
+	}
+
+	@Override
+	public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
+		return new RequestLoader(getActivity(), args);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
+
+	}
+
+	@Override
+	public void onLoaderReset(Loader<JSONObject> loader) {
+
 	}
 }
