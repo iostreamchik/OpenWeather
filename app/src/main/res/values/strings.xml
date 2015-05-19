@@ -7,6 +7,19 @@
     <string name="cant_load_info">Can`t load data, try again</string>
     <string name="sunrise">sunrise:</string>
     <string name="sunset">sunset:</string>
+    <string name="main_weather">weather:</string>
+    <string name="weather_description">weather description:</string>
+    <string name="temp">temp:</string>
+    <string name="temp_min">min:</string>
+    <string name="temp_max">max:</string>
+    <string name="pressure">pressure:</string>
+    <string name="sea_level">sea level:</string>
+    <string name="grnd_level">grnd level:</string>
+    <string name="tv_city">city:</string>
+    <string name="humidity">humidity:</string>
+    <string name="wind">wind</string>
+    <string name="speed">speed:</string>
+    <string name="deg">deg:</string>
 
 
 </resources>

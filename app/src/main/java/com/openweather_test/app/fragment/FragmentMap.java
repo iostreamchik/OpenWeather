@@ -10,9 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.SearchView;
 import android.view.*;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.*;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,13 +32,32 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 	private static GoogleMap map;
 
 	private static final int LOADER_CITY = 0;
-	private static final int LOADER_WEATHER = 1;
 
 	private Bundle cityBundle;
 
 	private ImageView ivIcon;
 	private ProgressBar prgbIcon;
 
+	private ProgressBar prgbMain;
+
+	private LinearLayout llWeatherInfo;
+
+	private TextView tvSunrise;
+	private TextView tvSunset;
+	private TextView tvMainWeather;
+	private TextView tvMainWeatherDescription;
+	private TextView tvTemp;
+	private TextView tvTempMin;
+	private TextView tvTempMax;
+	private TextView tvPressure;
+	private TextView tvSeaLevel;
+	private TextView tvGrndLevel;
+	private TextView tvCity;
+	private TextView tvHumidity;
+	private TextView tvWindSpeed;
+	private TextView tvWindDeg;
+
+	private CityModel cityModel;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,8 +76,26 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
+		llWeatherInfo = (LinearLayout) view.findViewById(R.id.ll_info);
+		prgbMain = (ProgressBar) view.findViewById(R.id.prgb_main);
+
 		ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
 		prgbIcon = (ProgressBar) view.findViewById(R.id.prgb_icon);
+
+		tvSunrise = (TextView) view.findViewById(R.id.tv_sunrise);
+		tvSunset = (TextView) view.findViewById(R.id.tv_sunset);
+		tvMainWeather = (TextView) view.findViewById(R.id.tv_main_weather);
+		tvMainWeatherDescription = (TextView) view.findViewById(R.id.tv_weather_description);
+		tvTemp = (TextView) view.findViewById(R.id.tv_temp);
+		tvTempMin = (TextView) view.findViewById(R.id.tv_temp_min);
+		tvTempMax = (TextView) view.findViewById(R.id.tv_temp_max);
+		tvPressure = (TextView) view.findViewById(R.id.tv_pressure);
+		tvSeaLevel = (TextView) view.findViewById(R.id.tv_sea_level);
+		tvGrndLevel = (TextView) view.findViewById(R.id.tv_grnd_level);
+		tvCity = (TextView) view.findViewById(R.id.tv_city);
+		tvHumidity = (TextView) view.findViewById(R.id.tv_humidity);
+		tvWindSpeed = (TextView) view.findViewById(R.id.tv_speed);
+		tvWindDeg = (TextView) view.findViewById(R.id.tv_deg);
 	}
 
 	@Override
@@ -70,6 +105,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 			SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
 					.findFragmentById(R.id.map);
 			mapFragment.getMapAsync(this);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (map != null && cityModel != null) {
+			fillMap(cityModel);
+			fillWeather(cityModel);
 		}
 	}
 
@@ -94,6 +138,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 			@Override
 			public boolean onQueryTextSubmit(String s) {
 				if (s.length() > 0) {
+					if (getLoaderManager().getLoader(LOADER_CITY) != null)
+						getLoaderManager().destroyLoader(LOADER_CITY);
 					if (cityBundle != null)
 						cityBundle = null;
 					cityBundle = RequestHelper.getWeatherByCity(s);
@@ -114,6 +160,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 
 	@Override
 	public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
+		llWeatherInfo.setVisibility(View.GONE);
+		prgbMain.setVisibility(View.VISIBLE);
+		prgbMain.setIndeterminate(true);
 		return new RequestLoader(getActivity(), args);
 	}
 
@@ -123,7 +172,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 			case LOADER_CITY:
 				if (data.has("coord")) {
 					Gson gson = new Gson();
-					CityModel cityModel = gson.fromJson(data.toString(), CityModel.class);
+					cityModel = gson.fromJson(data.toString(), CityModel.class);
 					if (cityModel != null) {
 						if (map != null) {
 							fillMap(cityModel);
@@ -139,7 +188,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 						e.printStackTrace();
 					}
 				}
-				getLoaderManager().destroyLoader(LOADER_CITY);
+				prgbMain.setVisibility(View.GONE);
+				prgbMain.setIndeterminate(false);
 				break;
 		}
 	}
@@ -184,6 +234,22 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, LoaderM
 			}
 		});
 
+		llWeatherInfo.setVisibility(View.VISIBLE);
 
+		tvSunrise.setText(getResources().getString(R.string.sunrise) + " " + cityModel.getSys().getSunriseFormatted() + " ");
+		tvSunset.setText(getResources().getString(R.string.sunset) + " " + cityModel.getSys().getSunsetFormatted());
+		tvMainWeather.setText(getResources().getString(R.string.main_weather) + " " + cityModel.getWeather().get(0).getMain());
+		tvMainWeatherDescription.setText(getResources().getString(R.string.weather_description) + " " + cityModel.getWeather().get(0).getDescription());
+		tvTemp.setText(getResources().getString(R.string.temp) + " " + cityModel.getMain().getTemp());
+		tvTempMin.setText(getResources().getString(R.string.temp_min) + " " + cityModel.getMain().getTempMin());
+		tvTempMax.setText(getResources().getString(R.string.temp_max) + " " + cityModel.getMain().getTempMax());
+		tvPressure.setText(getResources().getString(R.string.pressure) + " " + cityModel.getMain().getPressure());
+		tvSeaLevel.setText(getResources().getString(R.string.sea_level) + " " + cityModel.getMain().getSeaLevel());
+		tvGrndLevel.setText(getResources().getString(R.string.grnd_level) + " " + cityModel.getMain().getGrndLevel());
+		tvCity.setText(getResources().getString(R.string.city) + " " + cityModel.getName());
+		tvHumidity.setText(getResources().getString(R.string.humidity) + " " + cityModel.getMain().getHumidity());
+		tvWindSpeed.setText(getResources().getString(R.string.speed) + " " + cityModel.getWind().getSpeed() + " ");
+		tvWindDeg.setText(getResources().getString(R.string.deg) + " " + cityModel.getWind().getDeg());
 	}
+
 }

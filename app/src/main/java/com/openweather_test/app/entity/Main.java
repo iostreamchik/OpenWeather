@@ -1,12 +1,18 @@
 package com.openweather_test.app.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Main {
 	private double temp;
-	private double temp_min;
-	private double temp_max;
+	@SerializedName("temp_min")
+	private double tempMin;
+	@SerializedName("temp_max")
+	private double tempMax;
 	private double pressure;
-	private double sea_level;
-	private double grnd_level;
+	@SerializedName("sea_level")
+	private double seaLevel;
+	@SerializedName("grnd_level")
+	private double grndLevel;
 	private int humidity;
 
 
@@ -14,24 +20,24 @@ public class Main {
 		return temp;
 	}
 
-	public double getTemp_min() {
-		return temp_min;
+	public double getTempMin() {
+		return tempMin;
 	}
 
-	public double getTemp_max() {
-		return temp_max;
+	public double getTempMax() {
+		return tempMax;
 	}
 
 	public double getPressure() {
 		return pressure;
 	}
 
-	public double getSea_level() {
-		return sea_level;
+	public double getSeaLevel() {
+		return seaLevel;
 	}
 
-	public double getGrnd_level() {
-		return grnd_level;
+	public double getGrndLevel() {
+		return grndLevel;
 	}
 
 	public int getHumidity() {
