@@ -2,4 +2,6 @@
 <resources>
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#1a237e</color>
+
+    <color name="main_transparent_black_light">#6e000000</color>
 </resources>

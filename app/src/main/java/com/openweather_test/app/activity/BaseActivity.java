@@ -1,8 +1,9 @@
-package com.openweather_test.app;
+package com.openweather_test.app.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import com.openweather_test.app.R;
 
 public class BaseActivity extends AppCompatActivity {
 

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">OpenWeather</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="city">city name</string>
+    <string name="search">Search</string>
+
+
 </resources>
