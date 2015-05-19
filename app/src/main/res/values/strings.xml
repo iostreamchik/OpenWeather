@@ -4,6 +4,9 @@
     <string name="city">city name</string>
     <string name="search">Search</string>
     <string name="no_internet">no internet connection</string>
+    <string name="cant_load_info">Can`t load data, try again</string>
+    <string name="sunrise">sunrise:</string>
+    <string name="sunset">sunset:</string>
 
 
 </resources>

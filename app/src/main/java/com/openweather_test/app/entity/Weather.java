@@ -1,5 +1,7 @@
 package com.openweather_test.app.entity;
 
+import com.openweather_test.app.server_api.RequestHelper;
+
 public class Weather {
 	private int id;
 	private String main;
@@ -19,6 +21,6 @@ public class Weather {
 	}
 
 	public String getIcon() {
-		return icon;
+		return RequestHelper.ICON + icon;
 	}
 }

@@ -1,5 +1,7 @@
 package com.openweather_test.app.entity;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 public class CityModel {
@@ -14,6 +16,12 @@ public class CityModel {
 	private int id;
 	private String name;
 	private int cod;
+
+
+	public LatLng getLatLong() {
+		LatLng latLng = new LatLng(getCoord().getLat(), getCoord().getLon());
+		return latLng;
+	}
 
 	public Coord getCoord() {
 		return coord;

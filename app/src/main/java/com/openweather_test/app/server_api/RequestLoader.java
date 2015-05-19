@@ -47,24 +47,20 @@ public class RequestLoader extends Loader<JSONObject> {
 	@Override
 	protected void onStartLoading() {
 		super.onStartLoading();
-
-		if (!isNetworkAvailable()) {
-			stopLoading();
-			Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
-		}
-
-		if (serverTask != null)
-			serverTask.cancel(true);
-		serverTask = new ServerTask();
-
-		serverTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-
-		Log.d(TAG, "onStartLoading: " + request);
+		startLoad();
 	}
 
 	@Override
 	protected void onForceLoad() {
 		super.onForceLoad();
+		startLoad();
+	}
+
+	private void startLoad() {
+		if (!isNetworkAvailable()) {
+			stopLoading();
+			Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
+		}
 
 		if (serverTask != null)
 			serverTask.cancel(true);
@@ -137,27 +133,31 @@ public class RequestLoader extends Loader<JSONObject> {
 						break;
 				}
 
-				result = StringEscapeUtils.unescapeJava(EntityUtils.toString(response.getEntity()));
+				if (response != null) {
+					result = StringEscapeUtils.unescapeJava(EntityUtils.toString(response.getEntity()));
+				}
+				JSONObject object = null;
 				if (result != null) {
 					Log.d(TAG, "result = StringEscapeUtils: " + result);
+					object = new JSONObject(result);
 				}
 
-				JSONObject object = new JSONObject(result);
-
+				if(object == null)
+					object = new JSONObject();
 				return object;
 
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			} catch (JSONException e) {
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			} catch (IOException e) {
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			}
 		}
 
